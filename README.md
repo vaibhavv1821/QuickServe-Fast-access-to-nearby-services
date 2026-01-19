@@ -97,7 +97,7 @@ It represents:
 
 ## 👨‍💻 Author
 
-**Vaibhav**
+**Vaibhav Gatlewar**
 Software Engineering Student
 Backend Development | MERN Stack
 
