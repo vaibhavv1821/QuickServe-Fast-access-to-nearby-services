@@ -5,6 +5,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const providerRoutes = require('./src/routes/providerRoutes');
 const bookingRoutes = require('./src/routes/bookingRoutes');
 const reviewRoutes = require('./src/routes/reviewRoutes');
+const adminRoutes = require('./src/routes/adminRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,7 +18,10 @@ connectDB();
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/provider', providerRoutes); // ADD THIS
+app.use('/api/provider', providerRoutes);
+app.use('/api/booking', bookingRoutes);
+app.use('/api/review', reviewRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Test route
 app.get('/', (req, res) => {
