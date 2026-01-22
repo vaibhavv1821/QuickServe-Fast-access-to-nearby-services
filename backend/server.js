@@ -1,4 +1,6 @@
+
 require('dotenv').config();
+// const adminRoutes = require('./src/routes/adminRoutes');
 const express = require('express');
 const connectDB = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
@@ -6,6 +8,8 @@ const providerRoutes = require('./src/routes/providerRoutes');
 const bookingRoutes = require('./src/routes/bookingRoutes');
 const reviewRoutes = require('./src/routes/reviewRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
+const serviceRoutes = require('./src/routes/serviceRoutes');
+const searchRoutes = require('./src/routes/searchRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +26,8 @@ app.use('/api/provider', providerRoutes);
 app.use('/api/booking', bookingRoutes);
 app.use('/api/review', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/service', serviceRoutes);
+app.use('/api/search', searchRoutes);
 
 // Test route
 app.get('/', (req, res) => {

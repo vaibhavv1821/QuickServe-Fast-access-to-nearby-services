@@ -28,6 +28,14 @@ const userSchema = new mongoose.Schema({
     city: String,
     state: String
   },
+  profileImage: {
+    type: String,
+    default: ''
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
