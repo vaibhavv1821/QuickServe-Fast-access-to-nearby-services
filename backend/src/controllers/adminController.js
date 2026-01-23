@@ -1,6 +1,7 @@
 const Provider = require('../models/Provider');
 const User = require('../models/User');
 const Booking = require('../models/Booking');
+const { createNotificationHelper } = require('./notificationController');
 
 // Get all providers
 const getAllProviders = async (req, res) => {

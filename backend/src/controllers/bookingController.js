@@ -1,5 +1,6 @@
 const Booking = require('../models/Booking');
 const Provider = require('../models/Provider');
+const { createNotificationHelper } = require('./notificationController');
 
 // Create a new booking
 const createBooking = async (req, res) => {
@@ -39,6 +40,16 @@ const createBooking = async (req, res) => {
       address,
       price
     });
+
+    // Send notification to provider
+    await createNotificationHelper(
+      provider.userId,
+      'booking',
+      'New Booking Request',
+      `You have received a new booking request for ${serviceType} on ${new Date(date).toDateString()}`,
+      booking._id,
+      'Booking'
+    );
 
     res.status(201).json({
       success: true,
@@ -105,7 +116,7 @@ const updateBookingStatus = async (req, res) => {
     const { bookingId } = req.params;
     const { status } = req.body;
 
-    const booking = await Booking.findById(bookingId);
+    const booking = await Booking.findById(bookingId).populate('userId');
 
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
@@ -114,6 +125,16 @@ const updateBookingStatus = async (req, res) => {
     // Update status
     booking.status = status;
     await booking.save();
+
+    // Send notification to user about status change
+    await createNotificationHelper(
+      booking.userId._id,
+      'booking',
+      'Booking Status Updated',
+      `Your booking status has been updated to: ${status}`,
+      booking._id,
+      'Booking'
+    );
 
     res.status(200).json({
       success: true,

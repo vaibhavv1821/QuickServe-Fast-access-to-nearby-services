@@ -10,6 +10,8 @@ const reviewRoutes = require('./src/routes/reviewRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
 const serviceRoutes = require('./src/routes/serviceRoutes');
 const searchRoutes = require('./src/routes/searchRoutes');
+const chatRoutes = require('./src/routes/chatRoutes');
+const notificationRoutes = require('./src/routes/notificationRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,6 +30,8 @@ app.use('/api/review', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/service', serviceRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/notification', notificationRoutes);
 
 // Test route
 app.get('/', (req, res) => {
