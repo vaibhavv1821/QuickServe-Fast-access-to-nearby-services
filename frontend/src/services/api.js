@@ -8,6 +8,9 @@ const api = axios.create({
   }
 });
 
+// 👇 Add this line HERE
+console.log("API URL:", api.defaults.baseURL);
+
 // Add token to requests automatically
 api.interceptors.request.use(
   (config) => {
@@ -27,7 +30,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
