@@ -8,7 +8,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import SearchProviders from './pages/SearchProviders';
-import CreateBooking from './pages/CreateBooking';
+import BookService from './pages/BookService';
+import MyBookings from './pages/MyBookings';
 
 function App() {
   return (
@@ -40,10 +41,19 @@ function App() {
             />
 
             <Route
-              path="/booking/:providerId"
+              path="/book/:providerId"
               element={
                 <ProtectedRoute>
-                  <CreateBooking />
+                  <BookService />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/my-bookings"
+              element={
+                <ProtectedRoute>
+                  <MyBookings />
                 </ProtectedRoute>
               }
             />
