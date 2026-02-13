@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import SearchProviders from './pages/SearchProviders';
 import BookService from './pages/BookService';
 import MyBookings from './pages/MyBookings';
+import ProviderBookings from './pages/ProviderBookings';
 
 function App() {
   return (
@@ -54,6 +55,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MyBookings />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/provider-bookings"
+              element={
+                <ProtectedRoute>
+                  <ProviderBookings />
                 </ProtectedRoute>
               }
             />

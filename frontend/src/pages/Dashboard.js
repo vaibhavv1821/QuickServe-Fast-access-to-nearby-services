@@ -36,6 +36,7 @@ function Dashboard() {
 
           <div style={styles.card} onClick={() => navigate("/my-bookings")}>
             <h3>📅 My Bookings</h3>
+            <p>View your booking history</p>
           </div>
         </>
       )}
@@ -44,6 +45,11 @@ function Dashboard() {
         <>
           <div style={styles.card} onClick={() => navigate("/provider-profile")}>
             <h3>👤 My Profile</h3>
+            <p>Manage your profile</p>
+          </div>
+          <div style={styles.card} onClick={() => navigate('/provider-bookings')}>
+            <h3>📋 My Bookings</h3>
+            <p>View and manage requests</p>
           </div>
         </>
       )}
