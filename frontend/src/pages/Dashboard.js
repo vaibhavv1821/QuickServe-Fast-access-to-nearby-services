@@ -51,6 +51,11 @@ function Dashboard() {
             <h3>📋 My Bookings</h3>
             <p>View and manage requests</p>
           </div>
+          <div style={styles.card} onClick={() => navigate('/provider-reviews')}>
+            <h3>⭐ My Reviews</h3>
+            <p>Customer feedback</p>
+          </div>
+
         </>
       )}
 

@@ -4,7 +4,7 @@ import bookingService from '../services/bookingService';
 
 function MyBookings() {
   const navigate = useNavigate();
-  
+
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -184,6 +184,20 @@ function MyBookings() {
                   >
                     View Details
                   </button>
+                  {booking.status === 'completed' && (
+                    <button
+                      onClick={() => navigate(`/add-review/${booking.providerId}`, {
+                        state: {
+                          booking,
+                          providerId: booking.providerId
+                        }
+                      })}
+                      style={styles.reviewBtn}
+                    >
+                      ⭐ Add Review
+                    </button>
+                  )}
+
                 </div>
               </div>
             ))}
@@ -410,7 +424,18 @@ const styles = {
     cursor: 'pointer',
     fontWeight: 'bold',
     fontSize: '14px'
-  }
+  },
+  reviewBtn: {
+  flex: 1,
+  padding: '12px',
+  backgroundColor: '#ffc107',
+  color: '#000',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  fontWeight: 'bold',
+  fontSize: '14px'
+}
 };
 
 export default MyBookings;

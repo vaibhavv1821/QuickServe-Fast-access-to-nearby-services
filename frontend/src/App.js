@@ -11,6 +11,9 @@ import SearchProviders from './pages/SearchProviders';
 import BookService from './pages/BookService';
 import MyBookings from './pages/MyBookings';
 import ProviderBookings from './pages/ProviderBookings';
+import AddReview from './pages/AddReview';
+import ProviderReviews from './pages/ProviderReviews';
+import ProviderProfile from './pages/ProviderProfile';
 
 function App() {
   return (
@@ -64,6 +67,33 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ProviderBookings />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/add-review/:providerId"
+              element={
+                <ProtectedRoute>
+                  <AddReview />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/provider-reviews"
+              element={
+                <ProtectedRoute>
+                  <ProviderReviews />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/provider-profile"
+              element={
+                <ProtectedRoute>
+                  <ProviderProfile />
                 </ProtectedRoute>
               }
             />
