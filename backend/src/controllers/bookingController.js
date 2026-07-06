@@ -1,0 +1,223 @@
+const Booking = require('../models/Booking');
+const Provider = require('../models/Provider');
+const { createNotificationHelper } = require('./notificationController');
+
+// Create a new booking
+const createBooking = async (req, res) => {
+  try {
+    // Check if user role is 'user'
+    if (req.user.role !== 'user') {
+      return res.status(403).json({ message: 'Only users can create bookings' });
+    }
+
+    const { providerId, date, time, serviceType, address, price } = req.body;
+
+    // Check if provider exists
+    const provider = await Provider.findById(providerId);
+    if (!provider) {
+      return res.status(404).json({ message: 'Provider not found' });
+    }
+
+    // Check if booking already exists for same provider, date, and time
+    const existingBooking = await Booking.findOne({
+      userId: req.user._id,
+      providerId,
+      date,
+      time
+    });
+
+    if (existingBooking) {
+      return res.status(400).json({ message: 'You already have a booking with this provider at this time' });
+    }
+
+    // Create booking
+    const booking = await Booking.create({
+      userId: req.user._id,
+      providerId,
+      date,
+      time,
+      serviceType,
+      address,
+      price
+    });
+
+    // Send notification to provider
+    await createNotificationHelper(
+      provider.userId,
+      'booking',
+      'New Booking Request',
+      `You have received a new booking request for ${serviceType} on ${new Date(date).toDateString()}`,
+      booking._id,
+      'Booking'
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Booking created successfully',
+      booking
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get my bookings (for users)
+const getMyBookings = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const filter = { userId: req.user._id };
+    if (req.query.status) filter.status = req.query.status;
+
+    const [bookings, total] = await Promise.all([
+      Booking.find(filter).populate('providerId').sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Booking.countDocuments(filter)
+    ]);
+
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      bookings
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get bookings for provider
+const getProviderBookings = async (req, res) => {
+  try {
+    // Check if user is a provider
+    if (req.user.role !== 'provider') {
+      return res.status(403).json({ message: 'Only providers can access this' });
+    }
+
+    // Find provider profile
+    const provider = await Provider.findOne({ userId: req.user._id });
+    if (!provider) {
+      return res.status(404).json({ message: 'Provider profile not found' });
+    }
+
+    // Get all bookings for this provider
+    const bookings = await Booking.find({ providerId: provider._id })
+      .populate('userId', 'name email phone location')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      bookings
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update booking status
+const updateBookingStatus = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { status } = req.body;
+
+    const booking = await Booking.findById(bookingId).populate('userId');
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    // Update status
+    booking.status = status;
+    await booking.save();
+
+    // Send notification to user about status change
+    await createNotificationHelper(
+      booking.userId._id,
+      'booking',
+      'Booking Status Updated',
+      `Your booking status has been updated to: ${status}`,
+      booking._id,
+      'Booking'
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Booking status updated',
+      booking
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Cancel booking
+const cancelBooking = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    // Check if user owns this booking
+    if (booking.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'You can only cancel your own bookings' });
+    }
+
+    // Update status to cancelled
+    booking.status = 'cancelled';
+    await booking.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Booking cancelled successfully',
+      booking
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get single booking
+const getBookingById = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const booking = await Booking.findById(bookingId)
+      .populate('userId', 'name email phone profileImage location')
+      .populate({ path: 'providerId', populate: { path: 'userId', select: 'name email phone location profileImage' } });
+
+    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    const isUser = booking.userId._id.toString() === req.user._id.toString();
+    let isProvider = false;
+    if (req.user.role === 'provider') {
+      const provider = await Provider.findOne({ userId: req.user._id });
+      isProvider = provider && booking.providerId._id.toString() === provider._id.toString();
+    }
+    if (!isUser && !isProvider && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized to view this booking' });
+    }
+
+    res.status(200).json({ success: true, booking });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  createBooking,
+  getMyBookings,
+  getProviderBookings,
+  updateBookingStatus,
+  cancelBooking,
+  getBookingById
+};
