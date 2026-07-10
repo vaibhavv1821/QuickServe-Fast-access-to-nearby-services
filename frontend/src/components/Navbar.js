@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { COLORS, SHADOW } from '../styles/theme';
+import NotificationBell from './NotificationBell';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -28,14 +29,16 @@ function Navbar() {
         {isAuthenticated ? (
           <div style={styles.rightSection}>
             <button
-              onClick={() => navigate('/search')}
-              style={styles.navLink}
-            >
-              <i className="ti ti-search" style={{ fontSize: '16px' }}></i>
-              Find services
-            </button>
+  onClick={() => navigate('/search')}
+  style={styles.navLink}
+>
+  <i className="ti ti-search" style={{ fontSize: '16px' }}></i>
+  Find services
+</button>
 
-            <div style={styles.divider}></div>
+<NotificationBell />
+
+<div style={styles.divider}></div>
 
             <div style={styles.userMenu} onClick={() => setMenuOpen(!menuOpen)}>
               <div style={styles.avatar}>
