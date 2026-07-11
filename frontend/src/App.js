@@ -19,6 +19,9 @@ import BookService from './pages/BookService';
 import MyBookings from './pages/MyBookings';
 import AddReview from './pages/AddReview';
 import AdminDashboard from './pages/AdminDashboard';
+import UserProfile from './pages/UserProfile';
+import BookingDetails from './pages/BookingDetails';
+
 // Provider pages
 import ProviderProfile from './pages/ProviderProfile';
 import ProviderBookings from './pages/ProviderBookings';
@@ -43,12 +46,12 @@ function App() {
           <Route path="/add-review/:providerId" element={<ProtectedRoute><AddReview /></ProtectedRoute>} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-
+          <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
           {/* Protected - provider only */}
           <Route path="/provider-profile" element={<ProtectedRoute><ProviderProfile /></ProtectedRoute>} />
           <Route path="/provider-bookings" element={<ProtectedRoute><ProviderBookings /></ProtectedRoute>} />
           <Route path="/provider-reviews" element={<ProtectedRoute><ProviderReviews /></ProtectedRoute>} />
-
+          <Route path="/booking-details/:bookingId" element={<ProtectedRoute><BookingDetails /></ProtectedRoute>} />
           {/* Fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>

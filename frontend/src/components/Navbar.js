@@ -63,6 +63,10 @@ function Navbar() {
                     <i className="ti ti-layout-dashboard" style={{ fontSize: '16px' }}></i>
                     Dashboard
                   </button>
+                  <button style={styles.dropdownItem} onClick={() => navigate('/profile')}>
+                   <i className="ti ti-settings" style={{ fontSize: '16px' }}></i>
+                   Account settings
+                </button>
                   <button style={styles.dropdownItem} onClick={handleLogout}>
                     <i className="ti ti-logout" style={{ fontSize: '16px' }}></i>
                     Log out
