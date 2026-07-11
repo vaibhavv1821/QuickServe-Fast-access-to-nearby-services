@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { COLORS, SHADOW } from '../styles/theme';
+import chatService from '../services/chatService';
 
 const CATEGORY_ICONS = {
   Electrician: { icon: 'ti-bulb', color: COLORS.accent, bg: COLORS.accentLight },
@@ -16,9 +17,15 @@ function ProviderCard({ provider }) {
   const navigate = useNavigate();
   const category = CATEGORY_ICONS[provider.serviceType] || CATEGORY_ICONS.default;
 
-  const handleBookNow = () => {
-    navigate(`/book/${provider._id}`, { state: { provider } });
-  };
+  const handleMessage = async (e) => {
+  e.stopPropagation();
+  try {
+    const data = await chatService.createChat(provider._id);
+    navigate(`/chat?chatId=${data.chat._id}`);
+  } catch (err) {
+    alert('Failed to start conversation');
+  }
+};
 
   return (
     <div style={styles.card}>
@@ -33,7 +40,7 @@ function ProviderCard({ provider }) {
       </div>
 
       <div style={styles.nameRow}>
-        <h3 style={styles.name}>{provider.userId?.name || 'Unknown'}</h3>
+        <h3 style={styles.name} onClick={(e) => { e.stopPropagation(); navigate(`/provider/${provider._id}`); }} style={{...styles.name, cursor: 'pointer'}}>{provider.userId?.name || 'Unknown'}</h3>
         <span style={styles.serviceType}>{provider.serviceType}</span>
       </div>
 
@@ -51,15 +58,20 @@ function ProviderCard({ provider }) {
       {provider.bio && <p style={styles.bio}>{provider.bio}</p>}
 
       <div style={styles.footer}>
-        <div style={styles.price}>
-          <span style={styles.priceAmount}>₹{provider.price}</span>
-          <span style={styles.priceUnit}>/service</span>
-        </div>
-        <button onClick={handleBookNow} style={styles.bookBtn}>
-          Book now
-          <i className="ti ti-arrow-right" style={{ fontSize: '14px' }}></i>
-        </button>
-      </div>
+  <div style={styles.price}>
+    <span style={styles.priceAmount}>₹{provider.price}</span>
+    <span style={styles.priceUnit}>/service</span>
+  </div>
+  <div style={{ display: 'flex', gap: '8px' }}>
+    <button onClick={handleMessage} style={styles.messageBtn}>
+      <i className="ti ti-message-circle" style={{ fontSize: '14px' }}></i>
+    </button>
+    <button onClick={handleBookNow} style={styles.bookBtn}>
+      Book now
+      <i className="ti ti-arrow-right" style={{ fontSize: '14px' }}></i>
+    </button>
+  </div>
+</div>
     </div>
   );
 }
@@ -167,7 +179,14 @@ const styles = {
     borderRadius: '8px',
     fontSize: '13px',
     fontWeight: '600'
-  }
+  },
+  messageBtn: {
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  backgroundColor: COLORS.bgSubtle, color: COLORS.textSecondary, border: 'none',
+  width: '38px', borderRadius: '8px'
+}
+
+  
 };
 
 export default ProviderCard;

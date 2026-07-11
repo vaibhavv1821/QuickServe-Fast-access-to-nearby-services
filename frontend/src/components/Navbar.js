@@ -36,6 +36,11 @@ function Navbar() {
   Find services
 </button>
 
+<button onClick={() => navigate('/chat')} style={styles.navLink}>
+  <i className="ti ti-message-circle" style={{ fontSize: '16px' }}></i>
+  Messages
+</button>
+
 <NotificationBell />
 
 <div style={styles.divider}></div>

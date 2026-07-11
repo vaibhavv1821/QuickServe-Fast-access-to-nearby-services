@@ -4,10 +4,12 @@ import { AuthContext } from '../context/AuthContext';
 import adminService from '../services/adminService';
 import Layout from '../components/Layout';
 import { COLORS, SHADOW } from '../styles/theme';
+import { ToastContext } from '../context/ToastContext';
 
 function AdminDashboard() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const { showToast } = useContext(ToastContext);
 
   const [tab, setTab] = useState('pending');
   const [stats, setStats] = useState(null);
@@ -52,7 +54,7 @@ function AdminDashboard() {
       await adminService.approveProvider(providerId);
       setProviders(providers.map(p => p._id === providerId ? { ...p, approved: true } : p));
     } catch (err) {
-      alert('Failed to approve provider');
+      showToast('Provider approved', 'success');
     } finally {
       setActioningId(null);
     }
@@ -65,7 +67,7 @@ function AdminDashboard() {
       await adminService.rejectProvider(providerId);
       setProviders(providers.map(p => p._id === providerId ? { ...p, approved: false } : p));
     } catch (err) {
-      alert('Failed to reject provider');
+      showToast('Failed to reject provider', 'error');
     } finally {
       setActioningId(null);
     }

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import bookingService from '../services/bookingService';
 import Layout from '../components/Layout';
 import { COLORS, SHADOW } from '../styles/theme';
+import { useContext } from 'react';
+import { ToastContext } from '../context/ToastContext';
 
 const STATUS_CONFIG = {
   pending: { color: COLORS.warning, bg: COLORS.warningBg, icon: 'ti-clock' },
@@ -15,7 +17,7 @@ function ProviderBookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updatingId, setUpdatingId] = useState(null);
-
+  const { showToast } = useContext(ToastContext);
   useEffect(() => { loadBookings(); }, []);
 
   const loadBookings = async () => {
@@ -39,8 +41,7 @@ function ProviderBookings() {
       await bookingService.updateBookingStatus(bookingId, newStatus);
       setBookings(bookings.map(b => b._id === bookingId ? { ...b, status: newStatus } : b));
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update status');
-    } finally {
+      showToast(err.response?.data?.message || 'Failed to update status', 'error');    } finally {
       setUpdatingId(null);
     }
   };
