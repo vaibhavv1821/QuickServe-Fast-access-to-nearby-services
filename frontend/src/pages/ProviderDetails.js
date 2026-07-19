@@ -5,6 +5,8 @@ import reviewService from '../services/reviewService';
 import chatService from '../services/chatService';
 import Layout from '../components/Layout';
 import { COLORS, SHADOW } from '../styles/theme';
+import { useContext } from 'react';
+import { ToastContext } from '../context/ToastContext';
 
 function ProviderDetails() {
   const { providerId } = useParams();
@@ -13,6 +15,7 @@ function ProviderDetails() {
   const [provider, setProvider] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useContext(ToastContext);
 
   useEffect(() => { loadData(); }, [providerId]);
 
@@ -33,13 +36,13 @@ function ProviderDetails() {
   };
 
   const handleMessage = async () => {
-    try {
-      const data = await chatService.createChat(providerId);
-      navigate(`/chat?chatId=${data.chat._id}`);
-    } catch (err) {
-      alert('Failed to start conversation');
-    }
-  };
+  try {
+    const data = await chatService.createChat(providerId);
+    navigate(`/chat?chatId=${data.chat._id}`);
+  } catch (err) {
+    showToast('Failed to start conversation', 'error');
+  }
+};
 
   const renderStars = (rating, size = 14) =>
     [...Array(5)].map((_, i) => (

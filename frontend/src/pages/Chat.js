@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import chatService from '../services/chatService';
 import Layout from '../components/Layout';
 import { COLORS, SHADOW } from '../styles/theme';
+import { ToastContext } from '../context/ToastContext';
 
 function Chat() {
   const { user } = useContext(AuthContext);
@@ -17,6 +18,7 @@ function Chat() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const messagesEndRef = useRef(null);
+  const { showToast } = useContext(ToastContext);
 
   useEffect(() => { loadChats(); }, []);
 
@@ -65,10 +67,10 @@ function Chat() {
       setMessageText('');
       loadChats();
     } catch (err) {
-      alert('Failed to send message');
-    } finally {
-      setSending(false);
-    }
+  showToast('Failed to send message', 'error');
+} finally {
+  setSending(false);
+}
   };
 
   const getOtherParty = (chat) => {

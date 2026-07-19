@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bookingService from '../services/bookingService';
 import Layout from '../components/Layout';
 import { COLORS, SHADOW } from '../styles/theme';
+import { ToastContext } from '../context/ToastContext';
 
 const STATUS_CONFIG = {
   pending: { color: COLORS.warning, bg: COLORS.warningBg, icon: 'ti-clock' },
@@ -16,6 +17,7 @@ function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { showToast } = useContext(ToastContext);
 
   useEffect(() => { loadBookings(); }, []);
 
@@ -33,14 +35,15 @@ function MyBookings() {
   };
 
   const handleCancel = async (bookingId) => {
-    if (!window.confirm('Cancel this booking?')) return;
-    try {
-      await bookingService.cancelBooking(bookingId);
-      loadBookings();
-    } catch (err) {
-      alert('Failed to cancel booking');
-    }
-  };
+  if (!window.confirm('Cancel this booking?')) return;
+  try {
+    await bookingService.cancelBooking(bookingId);
+    loadBookings();
+    showToast('Booking cancelled', 'success');
+  } catch (err) {
+    showToast('Failed to cancel booking', 'error');
+  }
+};
 
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
